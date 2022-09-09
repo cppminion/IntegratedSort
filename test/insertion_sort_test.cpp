@@ -1,5 +1,5 @@
 #include "sorting_test.hpp"
-#include "../src/insertion_sort.cpp"
+#include "insertion_sort.hpp"
 
 class InsertionSortTest : public SortingTest {
     void SetUp() override {
