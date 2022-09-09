@@ -1,5 +1,5 @@
 #include "sorting_test.hpp"
-#include "../src/merge_sort.cpp"
+#include "merge_sort.hpp"
 
 class MergeSortTest : public SortingTest {
     void SetUp() override {
