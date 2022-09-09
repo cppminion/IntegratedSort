@@ -23,15 +23,14 @@ TEST_F(IntegratedSortTest, CustomizedCmp) {
     };
     IntegratedSort<int>::sort(arr, greater_than());
 
-    for (int i = 0; i < 20; ++i)
-        EXPECT_EQ(19-i, arr[i]);
+    EXPECT_TRUE(std::is_sorted(arr.begin(), arr.end(), greater_than()));
 }
 
 TEST_F(IntegratedSortTest, LambdaCmp) {
     shuffle_vec(arr.begin(), arr.end());
 
-    IntegratedSort<int>::sort(arr, [](int a, int b) { return a > b; });
+    auto comp = [] (int a, int b) { return a > b; };
+    IntegratedSort<int>::sort(arr, comp);
 
-    for (int i = 19; i >= 0; --i)
-        EXPECT_EQ(i, 19-arr[i]);
+    EXPECT_TRUE(std::is_sorted(arr.begin(), arr.end(), comp));
 }

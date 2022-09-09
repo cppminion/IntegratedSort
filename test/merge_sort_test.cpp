@@ -23,15 +23,14 @@ TEST_F(MergeSortTest, CustomizedCmp) {
     };
     MergeSort<int>::sort(arr, greater_than());
 
-    for (int i = 0; i < 20; ++i)
-        EXPECT_EQ(19-i, arr[i]);
+    EXPECT_TRUE(std::is_sorted(arr.begin(), arr.end(), greater_than()));
 }
 
 TEST_F(MergeSortTest, LambdaCmp) {
     shuffle_vec(arr.begin(), arr.end());
+    
+    auto comp = [] (int a, int b) { return a > b; };
+    MergeSort<int>::sort(arr, comp);
 
-    MergeSort<int>::sort(arr, [](int a, int b) { return a > b; });
-
-    for (int i = 19; i >= 0; --i)
-        EXPECT_EQ(i, 19-arr[i]);
+    EXPECT_TRUE(std::is_sorted(arr.begin(), arr.end(), comp));
 }
