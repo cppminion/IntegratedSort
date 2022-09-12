@@ -2,10 +2,12 @@
 #define SORTCOMP_SORTING_HPP
 #include <vector>
 
-long long  KEY_COMPS;
-
-void insertion_sort(std::vector<int> &arr, int lo, int hi) {
-    for (int i = lo+1; i <= hi; ++i) {
+long long KEY_COMPS;
+namespace SORTING {
+std::vector<int> arr, aux;
+int S;
+void insertion_sort(int lo, int hi) {
+    for (int i = lo + 1; i <= hi; ++i) {
         int j = i;
         while (j > 0 && (arr[j] < arr[j - 1])) {
             ++KEY_COMPS;
@@ -16,8 +18,7 @@ void insertion_sort(std::vector<int> &arr, int lo, int hi) {
     }
 }
 
-void merge(std::vector<int> &arr, int lo, int mid, int hi) {
-    std::vector<int> aux(hi - lo + 1);
+void merge(int lo, int mid, int hi) {
     int i = lo, j = mid + 1; // index at arr array
     int k = 0;               // index at aux array
 
@@ -34,26 +35,30 @@ void merge(std::vector<int> &arr, int lo, int mid, int hi) {
     while (j <= hi) {
         aux[k++] = arr[j++];
     }
-
-    std::copy(aux.begin(), aux.end(), arr.begin() + lo);
-}
-
-void integrated_sort(std::vector<int> &arr, int lo, int hi, int S) {
-    if (lo >= hi)
-        return ;
-
-    if (hi - lo < S) {
-        insertion_sort(arr, lo, hi);
-    } else {
-        int mid = (lo + hi) / 2;
-        integrated_sort(arr, lo, mid, S);
-        integrated_sort(arr, mid+1, hi, S);
-        merge(arr, lo, mid, hi);
+    for (int i = lo; i <= hi; ++i) {
+        arr[i] = aux[i - lo];
     }
 }
 
-void integrated_sort(std::vector<int> &arr, int S) {
-    integrated_sort(arr, 0, arr.size()-1, S);
+void integrated_sort(int lo, int hi) {
+    if (lo >= hi)
+        return;
+
+    if (hi - lo < S) {
+        insertion_sort(lo, hi);
+    } else {
+        int mid = (lo + hi) / 2;
+        integrated_sort(lo, mid);
+        integrated_sort(mid + 1, hi);
+        merge(lo, mid, hi);
+    }
 }
 
-#endif //SORTCOMP_SORTING_HPP
+void integrated_sort(std::vector<int> &tmp, int S) {
+    swap(tmp, arr);
+    aux.resize(arr.size());
+    integrated_sort(0, arr.size() - 1);
+    swap(tmp, arr);
+}
+} // namespace SORTING
+#endif // SORTCOMP_SORTING_HPP
