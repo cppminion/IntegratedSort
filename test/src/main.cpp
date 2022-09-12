@@ -1,6 +1,6 @@
 #include "helpers.hpp"
 #include "sorting.hpp"
-#include <bits/chrono.h>
+#include <chrono>
 #include <chrono>
 #include <fstream>
 #include <iostream>
@@ -134,6 +134,7 @@ void plot_optimal_S_comp(int size_10_log) {
 }
 
 int main() {
+    /*
     auto start = std::chrono::system_clock::now();
     plot_key_comp(8); // about 7 minutes
     auto t1 = std::chrono::system_clock::now();
@@ -181,9 +182,9 @@ int main() {
     plot_S_val(1);
     // plot execution time w.r.t. size for integrated sort
     plot_S_val(16);
-
+*/
     // generate array of size 10 million
-    std::vector<int> arr = create_vec(10000000);
+    std::vector<int> arr = create_vec(100000000);
     
     KEY_COMPS = 0;
     shuffle_vec(arr.begin(), arr.end());
@@ -209,9 +210,9 @@ int main() {
                    .count()) *
         std::chrono::microseconds::period::num /
         std::chrono::microseconds::period::den;
-    std::cout << "Merge sort: \n" << "Time: " << d1 << " ms" << 
+    std::cout << "Merge sort: \n" << "Time: " << d1 << " seconds" << 
         "\tKey comparisions: " << key_comps1 << std::endl;
-    std::cout << "Integrated sort:\n" << "Time: " << d2 << " ms" << 
+    std::cout << "Integrated sort:\n" << "Time: " << d2 << " seconds" << 
         "\tKey comparisions: " << key_comps2 << std::endl;
     
     return 0;
