@@ -2,12 +2,13 @@
 #include <fstream>
 #include "helpers.hpp"
 #include "sorting.hpp"
+#include <thread>
 
 // section c.1
 // fixed S, plot number of key comparisons w.r.t. size
 void plot_key_comp (int S) {
     std::vector<int> sizes; // sizes of input array
-    for (int i = 1000; i < 100000; i+=500) {
+    for (int i = 1000; i < 1000000; i+=1000) {
         sizes.push_back(i);
     }
 
@@ -35,7 +36,7 @@ void plot_key_comp (int S) {
 }
 
 // section c.ii
-// time w.r.t size of the array 
+// average sorting time w.r.t size of the array 
 void plot_S_val(int S) {
     std::vector<int> sizes; // sizes of input array
     for (int i = 1000; i < 100000; i+=500) {
@@ -68,12 +69,12 @@ void plot_S_val(int S) {
 }
 
 // try different S w.r.t. time, tring to find the S that minimize the time
-void plot_optimal_S(int size_10_log) {
-    int size = pow10(size_10_log);
+void plot_optimal_S_time(int size_10_log) {
+    int size = 5 * pow10(size_10_log);
     std::vector<int> arr = create_vec(size);
     std::vector<int> res;
     std::vector<int> thresholds;
-    for (int i = 4; i < 512; i += 4)
+    for (int i = 4; i < 32; i += 1)
         thresholds.push_back(i);
     for (auto threshold : thresholds) {
         shuffle_vec(arr.begin(), arr.end());
@@ -89,19 +90,51 @@ void plot_optimal_S(int size_10_log) {
     
     myfile << "time,S\n";
     for (int i = 0; i < res.size(); ++i) {
-        myfile << res[i] << "," << thresholds[i] << std::endl;
+        // average time of sorting (total_sorting_time / size)
+        myfile << (double) res[i] / size << "," << thresholds[i] << std::endl;
     }
     myfile.close();
     
 }
 
+// try different S w.r.t. key_comparisons, tring to find the S that minimize the time
+void plot_optimal_S_comp(int size_10_log) {
+    int size = 5 * pow10(size_10_log);
+    std::vector<int> arr = create_vec(size);
+    std::vector<int> res; // array to store key comparisons
+    
+    std::vector<int> thresholds; // 
+    for (int i = 4; i < 32; i += 1)
+        thresholds.push_back(i);
+    
+    for (auto threshold : thresholds) {
+        shuffle_vec(arr.begin(), arr.end());
+        KEY_COMPS = 0;
+        integrated_sort(arr, threshold);
+        res.push_back(KEY_COMPS);
+    }
+    std::ofstream myfile;
+    std::string file_name = "optimal_S_1e" + std::to_string(size_10_log);
+    myfile.open("../data/" + file_name + ".csv");
+    
+    myfile << "time,S\n";
+    for (int i = 0; i < res.size(); ++i) {
+        // average time of sorting (total_sorting_time / size)
+        myfile << res[i] << "," << thresholds[i] << std::endl;
+    }
+    std::cout << "Generated file " << file_name << ".csv" << std::endl;
+    myfile.close();
+}
+
 int main() {
-    plot_key_comp(16);
-    std::cout << "Generated file for threshold 16." << std::endl;
-    plot_S_val(16);
-    std::cout << "Generated file for threshold 16." << std::endl;
-    plot_optimal_S(5);
-    std::cout << "Generated file for 1e5." << std::endl;
-    std::cout << "Done!" << std::endl;
+    plot_key_comp(8); // about 7 minutes
+
+    std::thread t1(plot_optimal_S_comp, 4); // 1 seconds
+    t1.join();
+    std::thread t2(plot_optimal_S_comp, 5); // 20 seconds
+    t2.join();
+    std::thread t3(plot_optimal_S_comp, 6); // about 5 minutes
+    t3.join();
+    
     return 0;
 }

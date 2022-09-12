@@ -2,16 +2,17 @@
 #define SORTCOMP_SORTING_HPP
 #include <vector>
 
-int KEY_COMPS;
+long long  KEY_COMPS;
 
-void insertion_sort(std::vector<int> &arr) {
-    for (int i = 1; i < arr.size(); ++i) {
+void insertion_sort(std::vector<int> &arr, int lo, int hi) {
+    for (int i = lo+1; i <= hi; ++i) {
         int j = i;
         while (j > 0 && (arr[j] < arr[j - 1])) {
             ++KEY_COMPS;
             std::swap(arr[j - 1], arr[j]);
             j--;
         }
+        ++KEY_COMPS;
     }
 }
 
@@ -27,10 +28,12 @@ void merge(std::vector<int> &arr, int lo, int mid, int hi) {
         else
             aux[k++] = arr[j++];
     }
-    while (i <= mid)
+    while (i <= mid) {
         aux[k++] = arr[i++];
-    while (j <= hi)
+    }
+    while (j <= hi) {
         aux[k++] = arr[j++];
+    }
 
     std::copy(aux.begin(), aux.end(), arr.begin() + lo);
 }
@@ -39,8 +42,8 @@ void integrated_sort(std::vector<int> &arr, int lo, int hi, int S) {
     if (lo >= hi)
         return ;
 
-    if (arr.size() < S) {
-        insertion_sort(arr);
+    if (hi - lo < S) {
+        insertion_sort(arr, lo, hi);
     } else {
         int mid = (lo + hi) / 2;
         integrated_sort(arr, lo, mid, S);
