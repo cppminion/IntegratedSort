@@ -42,7 +42,7 @@ void plot_key_comp(int S) {
 // average sorting time w.r.t size of the array
 void plot_S_val(int S) {
     std::vector<int> sizes; // sizes of input array
-    for (int i = 1000; i < 100000; i += 500) {
+    for (int i = 1000; i < 1000000; i += 1000) {
         sizes.push_back(i);
     }
 
@@ -74,7 +74,7 @@ void plot_S_val(int S) {
 
 // try different S w.r.t. time, tring to find the S that minimize the time
 void plot_optimal_S_time(int size_10_log) {
-    int size = 5 * pow10(size_10_log);
+    int size = pow10(size_10_log);
     std::vector<int> arr = create_vec(size);
     std::vector<int> res;
     std::vector<int> thresholds;
@@ -95,8 +95,7 @@ void plot_optimal_S_time(int size_10_log) {
 
     myfile << "time,S\n";
     for (int i = 0; i < res.size(); ++i) {
-        // average time of sorting (total_sorting_time / size)
-        myfile << (double)res[i] / size << "," << thresholds[i] << std::endl;
+        myfile << res[i]<< "," << thresholds[i] << std::endl;
     }
     myfile.close();
 }
@@ -137,17 +136,15 @@ void plot_optimal_S_comp(int size_10_log) {
 int main() {
     auto start = std::chrono::system_clock::now();
     plot_key_comp(8); // about 7 minutes
-
     auto t1 = std::chrono::system_clock::now();
     plot_optimal_S_comp(4); // 1 seconds
-
     auto t2 = std::chrono::system_clock::now();
     plot_optimal_S_comp(5);
     auto t3 = std::chrono::system_clock::now();
     plot_optimal_S_comp(6);
-    // std::thread t3(plot_optimal_S_comp, 6); // about 5 minutes
-    // t3.join();
     auto t4 = std::chrono::system_clock::now();
+    plot_optimal_S_comp(7);
+    auto t5 = std::chrono::system_clock::now();
     auto d1 =
         double(std::chrono::duration_cast<std::chrono::microseconds>(t1 - start)
                    .count()) *
@@ -168,7 +165,54 @@ int main() {
                    .count()) *
         std::chrono::microseconds::period::num /
         std::chrono::microseconds::period::den;
-    std::cout << d1 << " " << d2 << " " << d3 << " " << d4 << "\n";
-    // 38.1401 0.086449 0 12.6004
+    auto d5 =
+        double(std::chrono::duration_cast<std::chrono::microseconds>(t5 - t4)
+                   .count()) *
+        std::chrono::microseconds::period::num /
+        std::chrono::microseconds::period::den;
+    std::cout << d1 << " " << d2 << " " << d3 << " " << d4 << " " << d5 << "\n";
+    // 38.1401 0.086449 0 12.6004 120
+    
+    // choose 16 as optimal threshold, plot key comparisons w.r.t. size
+    plot_key_comp(16);
+    // threshold 1 as merge sort, plot key comparisons w.r.t. size
+    plot_key_comp(1);
+    // plot execution time w.r.t. size for merge sort
+    plot_S_val(1);
+    // plot execution time w.r.t. size for integrated sort
+    plot_S_val(16);
+
+    // generate array of size 10 million
+    std::vector<int> arr = create_vec(10000000);
+    
+    KEY_COMPS = 0;
+    shuffle_vec(arr.begin(), arr.end());
+    auto start = std::chrono::high_resolution_clock::now();
+    SORTING::integrated_sort(arr, 1);
+    auto t1 = std::chrono::high_resolution_clock::now();
+    int key_comps1 = KEY_COMPS;
+    
+    shuffle_vec(arr.begin(), arr.end());
+    KEY_COMPS = 0;
+    auto t2 = std::chrono::high_resolution_clock::now();
+    SORTING::integrated_sort(arr, 16);
+    auto t3 = std::chrono::high_resolution_clock::now();
+    int key_comps2 = KEY_COMPS;
+
+    auto d1 =
+        double(std::chrono::duration_cast<std::chrono::microseconds>(t1 - start)
+                   .count()) *
+        std::chrono::microseconds::period::num /
+        std::chrono::microseconds::period::den;
+    auto d2 =
+        double(std::chrono::duration_cast<std::chrono::microseconds>(t3 - t2)
+                   .count()) *
+        std::chrono::microseconds::period::num /
+        std::chrono::microseconds::period::den;
+    std::cout << "Merge sort: \n" << "Time: " << d1 << " ms" << 
+        "\tKey comparisions: " << key_comps1 << std::endl;
+    std::cout << "Integrated sort:\n" << "Time: " << d2 << " ms" << 
+        "\tKey comparisions: " << key_comps2 << std::endl;
+    
     return 0;
 }
