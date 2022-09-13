@@ -9,7 +9,7 @@ template <class T> class IntegratedSort {
     IntegratedSort() = delete;
 
     static void sort(std::vector<T> &arr);
-    static void sort(std::vector<T> &arr, auto cmp);
+    static void sort(std::vector<T> &arr, auto cmp); // sort with customized comparator
 
   private:
     // THRESHOLD for switching between merge sort and insertion sort
@@ -20,7 +20,7 @@ template <class T> class IntegratedSort {
     static void sort(std::vector<T> &arr, int lo, int hi, auto cmp);
 
     // helper function to do inserton sort when the size of array is small
-    static void insertion_sort(std::vector<T> &arr, auto cmp);
+    static void insertion_sort(std::vector<T> &arr, int lo, int hi, auto cmp);
 
     // helper function to do the merge of two sorted subarrays
     static void merge(std::vector<T> &arr, int lo, int mid, int hi, auto cmp);
@@ -35,8 +35,8 @@ template <class T> void IntegratedSort<T>::sort(std::vector<T> &arr, auto cmp) {
 }
 
 template <class T>
-void IntegratedSort<T>::insertion_sort(std::vector<T> &arr, auto cmp) {
-    for (int i = 1; i < arr.size(); ++i) {
+void IntegratedSort<T>::insertion_sort(std::vector<T> &arr, int lo, int hi, auto cmp) {
+    for (int i = lo+1; i <= hi; ++i) {
         int j = i;
         while (j > 0 && cmp(arr[j], arr[j - 1])) {
             std::swap(arr[j - 1], arr[j]);
@@ -50,7 +50,7 @@ void IntegratedSort<T>::sort(std::vector<T> &arr, int lo, int hi, auto cmp) {
     if (lo >= hi)
         return;
     if (hi - lo <= THRESHOLD) {
-        insertion_sort(arr, cmp);
+        insertion_sort(arr, lo, hi, cmp);
     } else {
         int mid = (hi - lo) / 2 + lo;
         sort(arr, lo, mid, cmp);
