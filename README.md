@@ -8,21 +8,20 @@ efficiency. The idea is to set a small integer S as a threshold for the size of 
 Once the size of a subarray in a recursive call of Mergesort is less than or equal to S,
 the algorithm will switch to Insertion Sort, which is efficient for small-sized input.
 
-## Usage
-Build the project: 
+--- 
+- Build the project: 
 ``` bash
 $ mkdir build && cd build
 $ cmake ..
 $ make all
 ```
-Test the correctness of sorting algorithms
-``` bash
-# quick check
-$ make test
-# check each algorithms' correctness
-$ ./test/SortingTest
-``` 
-Run the project
+- Run the project
 ``` bash
 $ ./IntegratedSort
 ```
+
+
+- Try different threshold values: [test folder.](test/).
+- Visualization: [Jupyter noteboook](test/src/visualize.ipynb).
+
+
